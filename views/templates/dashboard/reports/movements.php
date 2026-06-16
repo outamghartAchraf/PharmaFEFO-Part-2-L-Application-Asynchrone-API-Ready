@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
 
-                        <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tbody id="movementTableBody" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
 
                         <?php if (!empty($reports)): ?>
                             <?php foreach ($reports as $r): ?>
@@ -145,6 +145,99 @@
         </main>
     </div>
 </div>
+
+<script>
+fetch('index.php?action=api_report_movements')
+    .then(response => response.json())
+    .then(data => {
+
+        const tbody = document.getElementById('movementTableBody');
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="py-16 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                            <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <i class="fa-solid fa-arrow-right-arrow-left text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">No operations recorded</p>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    There are no operational stock processing items captured across the log indexes currently.
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        data.forEach(r => {
+
+            const typeBadge =
+                r.type === 'IN'
+                    ? `<span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-md font-bold text-[10px] tracking-wide uppercase">
+                            <i class="fa-solid fa-circle-arrow-down text-[9px] text-emerald-500"></i>
+                            IN
+                       </span>`
+                    : `<span class="inline-flex items-center gap-1 bg-rose-50 border border-rose-100 text-rose-700 px-2.5 py-0.5 rounded-md font-bold text-[10px] tracking-wide uppercase">
+                            <i class="fa-solid fa-circle-arrow-up text-[9px] text-rose-500"></i>
+                            OUT
+                       </span>`;
+
+            const qty =
+                (r.type === 'IN' ? '+' : '-') + Number(r.quantity || 0).toLocaleString();
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/60 transition-colors">
+
+                    <td class="py-4 px-5 font-bold text-slate-900 text-sm tracking-tight">
+                        ${r.product_name ?? ''}
+                    </td>
+
+                    <td class="py-4 px-5 font-mono text-slate-600 font-semibold">
+                        ${r.batch_number ?? ''}
+                    </td>
+
+                    <td class="py-4 px-5 text-center whitespace-nowrap">
+                        ${typeBadge}
+                    </td>
+
+                    <td class="py-4 px-5 text-right font-extrabold text-sm tracking-tight ${r.type === 'IN' ? 'text-emerald-600' : 'text-slate-900'}">
+                        ${qty}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-600 font-semibold">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-regular fa-user text-slate-400 text-[10px]"></i>
+                            <span>${r.username ?? '-'}</span>
+                        </div>
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-slate-500 font-medium">
+                            <i class="fa-regular fa-clock text-slate-400"></i>
+                            ${r.movement_date ?? ''}
+                        </span>
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500 font-normal truncate max-w-xs italic" title="${r.note ?? ''}">
+                        ${r.note ?? '-'}
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    })
+    .catch(error => {
+        console.error('Error fetching stock movements:', error);
+    });
+</script>
 
 </body>
 </html>

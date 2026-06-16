@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <form action="index.php?action=user_update" method="POST" class="p-6 space-y-5">
+                <form id="editUserForm" class="p-6 space-y-5">
 
                     <input type="hidden" name="id" value="<?= $user->id ?>">
 
@@ -125,5 +125,39 @@
     </div>
 </div>
 
+ 
+
+<script>
+document.getElementById('editUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch('index.php?action=api_user_update', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+
+           
+            window.location.href =
+                'index.php?action=user_index&message=' +
+                encodeURIComponent(data.message);
+
+        } else {
+            alert(data.message || 'Update failed');
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Server error');
+    });
+
+});
+</script>
 </body>
 </html>

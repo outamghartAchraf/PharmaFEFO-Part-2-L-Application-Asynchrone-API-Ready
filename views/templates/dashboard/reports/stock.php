@@ -143,5 +143,84 @@
     </div>
 </div>
 
+ <script>
+    fetch('index.php?action=api_report_stock')
+    .then(res => res.json())
+    .then(data => {
+
+        const tbody = document.querySelector('tbody');
+
+        if (!data.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="py-16 px-5 text-center">
+                        No data found
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        data.forEach(r => {
+
+            const statusBadge = r.status === 'ACTIVE'
+                ? `
+                <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Active
+                </span>
+                `
+                : `
+                <span class="inline-flex items-center gap-1 bg-rose-50 border border-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                    ${r.status}
+                </span>
+                `;
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/60 transition-colors">
+
+                    <td class="py-4 px-5 font-bold text-slate-900 text-sm tracking-tight">
+                        ${r.product_name}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500 font-mono tracking-tight">
+                        ${r.cip_code}
+                    </td>
+
+                    <td class="py-4 px-5 font-mono font-bold text-slate-600">
+                        ${r.batch_number}
+                    </td>
+
+                    <td class="py-4 px-5 text-right font-extrabold text-sm text-emerald-600 tracking-tight">
+                        ${parseInt(r.qty_available).toLocaleString()}
+                    </td>
+
+                    <td class="py-4 px-5 text-right font-semibold text-slate-400 tracking-tight">
+                        ${parseInt(r.qty_received).toLocaleString()}
+                    </td>
+
+                    <td class="py-4 px-5 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold tracking-tight">
+                            <i class="fa-regular fa-calendar text-slate-400"></i>
+                            ${r.expiration_date}
+                        </span>
+                    </td>
+
+                    <td class="py-4 px-5 text-center whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    })
+    .catch(err => {
+        console.error(err);
+    });
+ </script>
 </body>
 </html>

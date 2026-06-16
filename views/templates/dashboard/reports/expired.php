@@ -130,5 +130,78 @@
     </div>
 </div>
 
+ <script>
+fetch('index.php?action=api_report_expired')
+    .then(res => res.json())
+    .then(data => {
+
+        const tbody = document.querySelector('tbody');
+
+        if (!data.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="py-16 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                            <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">No expired items found</p>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    There are no isolated product batches currently reporting lifecycle timeouts on this matrix register loop.
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        data.forEach(r => {
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/60 transition-colors">
+
+                    <td class="py-4 px-5 font-bold text-slate-900 text-sm tracking-tight">
+                        ${r.product_name}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500 font-mono tracking-tight">
+                        ${r.cip_code}
+                    </td>
+
+                    <td class="py-4 px-5 font-mono font-bold text-slate-600">
+                        ${r.batch_number}
+                    </td>
+
+                    <td class="py-4 px-5 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-100 font-bold tracking-tight">
+                            <i class="fa-regular fa-calendar-times text-rose-500"></i>
+                            ${r.expiration_date}
+                        </span>
+                    </td>
+
+                    <td class="py-4 px-5 text-right font-extrabold text-sm text-rose-600 tracking-tight">
+                        ${parseInt(r.qty_available).toLocaleString()}
+                    </td>
+
+                    <td class="py-4 px-5 text-center whitespace-nowrap">
+                        <span class="inline-flex items-center bg-rose-100 border border-rose-200 text-rose-700 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] tracking-wide uppercase">
+                            Expired
+                        </span>
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    })
+    .catch(err => {
+        console.error("Error fetching expired report:", err);
+    });
+</script>
 </body>
 </html>
