@@ -58,7 +58,7 @@
             <div class="bg-white border border-slate-200 rounded-xl shadow-sm max-w-2xl overflow-hidden">
                 <div class="p-6 md:p-8">
                     
-                    <form method="POST" action="index.php?action=batch_update" class="space-y-5">
+                   <form id="editBatchForm" class="space-y-5">
 
                         <input type="hidden" name="id" value="<?= $batch->id ?>">
 
@@ -180,6 +180,39 @@
         </main>
     </div>
 </div>
+
+<script>
+document.getElementById('editBatchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch('index.php?action=api_batch_update', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+
+           
+            window.location.href =
+                'index.php?action=batches&message=' +
+                encodeURIComponent(data.message);
+
+        } else {
+            alert(data.message || 'Update failed');
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Server error');
+    });
+
+});
+</script>
 
 </body>
 </html>

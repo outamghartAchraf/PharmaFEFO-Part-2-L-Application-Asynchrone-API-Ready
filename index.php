@@ -59,7 +59,7 @@ if (isset($_GET['action'])) {
             BatchController::createAction();
             break;
 
-        case 'batches_edit':
+        case 'batch_edit':
             BatchController::editAction();
             break;
 
