@@ -68,9 +68,10 @@
             <?php endif; ?>
 
             <div class="bg-white border border-slate-200 rounded-xl shadow-sm max-w-2xl overflow-hidden">
+                <p id="Errorform" class="text-red-500 text-sm mt-2 px-4 pt-4"></p>
                 <div class="p-6 md:p-8">
 
-                    <form action="index.php?action=stock_store" method="POST" class="space-y-5">
+                    <form id="stockMovementForm" class="space-y-5">
 
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1">
@@ -79,7 +80,7 @@
                             <div class="relative">
                                 <select name="product_id" 
                                         class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all appearance-none cursor-pointer" 
-                                        required>
+                                         >
                                     <option value="" class="text-slate-400">-- Select Product --</option>
                                     
                                     <?php foreach ($products as $p): ?>
@@ -104,7 +105,7 @@
                                 <div class="relative">
                                     <select name="type" 
                                             class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all appearance-none cursor-pointer" 
-                                            required>
+                                             >
                                         <option value="IN">IN (Stock Entry)</option>
                                         <option value="OUT">OUT (Dispense)</option>
                                         <option value="RETURN">RETURN</option>
@@ -125,7 +126,7 @@
                                        min="1"
                                        placeholder="e.g. 250"
                                        class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                                       required>
+                                        >
                             </div>
 
                         </div>
@@ -165,5 +166,41 @@
     </div>
 </div>
 
+<script>
+document.getElementById('stockMovementForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    if(!formData.get('product_id') || !formData.get('type') || !formData.get('quantity')) {
+        document.getElementById('Errorform').textContent = 'Please fill in all required fields.';
+        return;
+    }
+
+    fetch('index.php?action=api_stock_store', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+
+            window.location.href =
+                'index.php?action=stock_movements&message=' +
+                encodeURIComponent(data.message);
+
+        } else {
+            document.getElementById('Errorform').textContent = data.message || 'Error saving stock movement';
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('Errorform').textContent = 'An unexpected error occurred';
+    });
+
+});
+</script>
 </body>
 </html>

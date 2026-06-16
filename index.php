@@ -1,15 +1,16 @@
 <?php
-
 require_once __DIR__ . "/src/controller/web/UserController.php";
 require_once __DIR__ . "/src/controller/web/MedicalController.php";
 require_once __DIR__ . "/src/controller/web/BatchController.php";
-require_once __DIR__ . "/src/controller/StockMovementController.php";
+require_once __DIR__ . "/src/controller/web/StockMovementController.php";
 require_once __DIR__ . "/src/controller/NotificationController.php";
 require_once __DIR__ . "/src/controller/ReportController.php";
 require_once __DIR__ . "/src/controller/api/ApiMedicalController.php";
 require_once __DIR__ . "/src/controller/api/ApiBatchController.php";
 require_once __DIR__ . "/src/controller/api/ApiUserController.php";
 require_once __DIR__ . "/src/controller/web/DashboardController.php";
+require_once __DIR__ . "/src/controller/api/StockMovementApiController.php";
+
 
 
 if (isset($_GET['action'])) {
@@ -62,6 +63,27 @@ if (isset($_GET['action'])) {
         case 'batch_edit':
             BatchController::editAction();
             break;
+
+        case 'stock_movements':
+            StockMovementController::index();
+            break;
+
+        case 'stock_create':
+            StockMovementController::create_stock();
+            break;
+
+        case 'stock_by_batch':
+            StockMovementController::byBatch();
+            break;
+
+        case 'stock_in':
+            StockMovementController::in();
+            break;
+
+        case 'stock_out':
+            StockMovementController::out();
+            break;
+
 
 
 
@@ -133,6 +155,14 @@ if (isset($_GET['action'])) {
 
         case 'logout':
             UserController::logout();
+            break;
+
+        case 'api_stock_store':
+            StockMovementApiController::store();
+            break;
+
+        case 'api_stock_movements':
+            StockMovementApiController::index();
             break;
     }
 } else {

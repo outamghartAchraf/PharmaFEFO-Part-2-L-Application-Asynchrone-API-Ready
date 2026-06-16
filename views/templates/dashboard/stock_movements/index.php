@@ -78,7 +78,7 @@
                             </tr>
                         </thead>
 
-                        <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tbody id="movementsTable" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
 
                         <?php if (!empty($movements)): ?>
                             <?php foreach ($movements as $m): ?>
@@ -157,6 +157,112 @@
         </main>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    fetch('index.php?action=api_stock_movementsss')
+        .then(res => res.json())
+        .then(movements => {
+
+            const tbody = document.getElementById('movementsTable');
+
+            if (!movements || movements.length === 0) {
+
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-14 px-5 text-center">
+                            <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                                <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                    <i class="fa-solid fa-box-open text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">No transactions recorded</p>
+                                    <p class="text-xs text-slate-400 mt-0.5">
+                                        No stock movements found
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            movements.forEach(m => {
+
+                let typeBadge = '';
+
+                if (m.type === 'IN') {
+                    typeBadge = `
+                        <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full font-bold text-[10px] uppercase">
+                            <i class="fa-solid fa-arrow-turn-down text-emerald-500"></i>
+                            Stock In
+                        </span>`;
+                }
+                else if (m.type === 'OUT') {
+                    typeBadge = `
+                        <span class="inline-flex items-center gap-1 bg-rose-50 border border-rose-200 text-rose-800 px-2.5 py-1 rounded-full font-bold text-[10px] uppercase">
+                            <i class="fa-solid fa-arrow-turn-up text-rose-500"></i>
+                            Stock Out
+                        </span>`;
+                }
+                else if (m.type === 'RETURN') {
+                    typeBadge = `
+                        <span class="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-1 rounded-full font-bold text-[10px] uppercase">
+                            <i class="fa-solid fa-rotate-left text-amber-500"></i>
+                            Returned
+                        </span>`;
+                }
+                else {
+                    typeBadge = `
+                        <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-bold text-[10px] uppercase">
+                            ${m.type}
+                        </span>`;
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-50/60 transition-colors">
+
+                        <td class="py-4 px-5 text-center font-mono font-semibold text-slate-400">
+                            #${m.id}
+                        </td>
+
+                        <td class="py-4 px-5 font-mono font-bold text-sm tracking-tight text-slate-900">
+                            ${m.batch_number ?? '-'}
+                        </td>
+
+                        <td class="py-4 px-5 whitespace-nowrap">
+                            ${typeBadge}
+                        </td>
+
+                        <td class="py-4 px-5 font-bold text-sm text-slate-900">
+                            ${m.quantity}
+                        </td>
+
+                        <td class="py-4 px-5 text-slate-500 max-w-xs truncate">
+                            ${m.note ?? '-'}
+                        </td>
+
+                        <td class="py-4 px-5 text-right text-slate-400 font-semibold whitespace-nowrap">
+                            ${m.movement_date ?? '-'}
+                        </td>
+
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+        })
+        .catch(err => {
+            console.error('Error:', err);
+        });
+
+});
+</script>
 
 <script>
     setTimeout(() => {
