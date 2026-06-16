@@ -86,98 +86,9 @@
                                 <th class="py-3.5 px-5 text-right">Actions Matrix</th>
                             </tr>
                         </thead>
-                        <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tbody id="batchesTableBody" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
 
-                        <?php if (!empty($batches)): ?>
-                            <?php foreach ($batches as $batch): ?>
-                                <tr class="hover:bg-slate-50/60 transition-colors">
-
-                                    <td class="py-4 px-5 font-semibold text-slate-900">
-                                        <?= htmlspecialchars($batch->product_name ?? 'N/A') ?>
-                                    </td>
-
-                                    <td class="py-4 px-5 text-slate-600 font-mono tracking-tight font-bold">
-                                        <?= htmlspecialchars($batch->batch_number) ?>
-                                    </td>
-
-                                    <td class="py-4 px-5 text-slate-500">
-                                        <?= htmlspecialchars($batch->expiration_date) ?>
-                                    </td>
-
-                                    <td class="py-4 px-5 text-slate-500">
-                                        <?= (int)$batch->qty_received ?>
-                                    </td>
-
-                                    <td class="py-4 px-5">
-                                        <?php if ($batch->qty_available <= 0): ?>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-bold border border-rose-100">0 Available</span>
-                                        <?php else: ?>
-                                            <span class="text-slate-900 font-bold text-sm"><?= (int)$batch->qty_available ?></span>
-                                        <?php endif; ?>
-                                    </td>
-
-                                    <td class="py-4 px-5">
-                                        <?php if ($batch->status === 'ACTIVE'): ?>
-                                            <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
-                                                <i class="fa-solid fa-circle text-[5px] text-emerald-500"></i> ACTIVE
-                                            </span>
-
-                                        <?php elseif ($batch->status === 'EXPIRED'): ?>
-                                            <span class="inline-flex items-center gap-1 bg-rose-50 border border-rose-200 text-rose-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
-                                                <i class="fa-solid fa-circle text-[5px] text-rose-500 animate-pulse"></i> EXPIRED
-                                            </span>
-
-                                        <?php elseif ($batch->status === 'DESTROYED'): ?>
-                                            <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-300 text-slate-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
-                                                <i class="fa-solid fa-circle text-[5px] text-slate-500"></i> DESTROYED
-                                            </span>
-
-                                        <?php elseif ($batch->status === 'RETURNED'): ?>
-                                            <span class="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
-                                                <i class="fa-solid fa-circle text-[5px] text-amber-500"></i> RETURNED
-                                            </span>
-
-                                        <?php else: ?>
-                                            <span class="inline-flex items-center gap-1 bg-blue-50 border border-blue-200 text-blue-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
-                                                <?= htmlspecialchars($batch->status) ?>
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
-
-                                    <td class="py-4 px-5 text-right whitespace-nowrap">
-                                        <div class="inline-flex items-center gap-1.5">
-                                            <a href="index.php?action=batch_edit&id=<?= $batch->id ?>" 
-                                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-amber-700 hover:bg-amber-50 hover:border-amber-200 transition-all" 
-                                               title="Edit Parameters">
-                                                <i class="fa-solid fa-pen text-xs"></i>
-                                            </a>
-                                            
-                                            <a href="index.php?action=batch_delete&id=<?= $batch->id ?>" 
-                                               onclick="return confirm('Are you sure you want to permanently delete this batch reference?')"
-                                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 transition-all" 
-                                               title="Delete Entry">
-                                                <i class="fa-solid fa-trash-can text-xs"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-
-                            <tr>
-                                <td colspan="7" class="py-12 px-5 text-center">
-                                    <div class="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
-                                        <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                                            <i class="fa-solid fa-box-open text-xl"></i>
-                                        </div>
-                                        <p class="text-sm font-bold text-slate-800 mt-2">No active batches tracked</p>
-                                        <p class="text-xs text-slate-400">There are currently no record indicators configured inside this dataset schema context frame.</p>
-                                    </div>
-                                </td>
-                            </tr>
-
-                        <?php endif; ?>
+  
 
                         </tbody>
                     </table>
@@ -189,13 +100,163 @@
 </div>
 
 <script>
-    fetch('index.php?action=api_batches')
-        .then(response => response.json())
-        .then(data => {
-  
-        })
-        .catch(error => console.error('Error fetching products:', error));
+
+fetch('index.php?action=api_batches')
+    .then(response => response.json())
+    .then(batches => {
+
+        const tbody = document.getElementById('batchesTableBody');
+
+        if (batches.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="py-12 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
+                            <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <i class="fa-solid fa-box-open text-xl"></i>
+                            </div>
+                            <p class="text-sm font-bold text-slate-800 mt-2">
+                                No active batches tracked
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = '';
+
+        batches.forEach(batch => {
+
+            let statusBadge = '';
+
+            if (batch.status === 'ACTIVE') {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                        <i class="fa-solid fa-circle text-[5px] text-emerald-500"></i>
+                        ACTIVE
+                    </span>
+                `;
+            } else if (batch.status === 'EXPIRED') {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1 bg-rose-50 border border-rose-200 text-rose-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                        <i class="fa-solid fa-circle text-[5px] text-rose-500"></i>
+                        EXPIRED
+                    </span>
+                `;
+            } else if (batch.status === 'DESTROYED') {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-300 text-slate-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                        <i class="fa-solid fa-circle text-[5px] text-slate-500"></i>
+                        DESTROYED
+                    </span>
+                `;
+            } else {
+                statusBadge = `
+                    <span class="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-800 px-2.5 py-1 rounded-full font-bold text-[10px] tracking-wide uppercase">
+                        ${batch.status}
+                    </span>
+                `;
+            }
+
+            html += `
+                <tr class="hover:bg-slate-50/60 transition-colors">
+
+                    <td class="py-4 px-5 font-semibold text-slate-900">
+                        ${batch.product_name}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-600 font-mono tracking-tight font-bold">
+                        ${batch.batch_number}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500">
+                        ${batch.expiration_date}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500">
+                        ${batch.qty_received}
+                    </td>
+
+                    <td class="py-4 px-5">
+                        ${
+                            batch.qty_available <= 0
+                            ? `<span class="inline-flex items-center px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-bold border border-rose-100">
+                                    0 Available
+                               </span>`
+                            : `<span class="text-slate-900 font-bold text-sm">
+                                    ${batch.qty_available}
+                               </span>`
+                        }
+                    </td>
+
+                    <td class="py-4 px-5">
+                        ${statusBadge}
+                    </td>
+
+                    <td class="py-4 px-5 text-right whitespace-nowrap">
+                        <div class="inline-flex items-center gap-1.5">
+
+                            <a href="index.php?action=batch_edit&id=${batch.id}"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-amber-700 hover:bg-amber-50 hover:border-amber-200 transition-all">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </a>
+                    <a
+                        href="#"
+                        data-id="${batch.id}"
+                        class="delete-batch w-8 h-8 flex items-center justify-center bg-white border border-rose-100 text-rose-600 rounded-lg hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm">
+                        <i class="fa-solid fa-trash text-[11px]"></i>
+                    </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    })
+    .catch(error => console.error(error));
 </script>
+
+    <script>
+        document.addEventListener('click', async function(e) {
+
+            const button = e.target.closest('.delete-batch');
+
+            if (!button) return;
+
+            e.preventDefault();
+
+            const id = button.dataset.id;
+
+            if (!confirm('Are you sure ?')) {
+                return;
+            }
+
+            const response = await fetch(
+                `index.php?action=api_batch_delete&id=${id}`, {
+                    method: 'POST'
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                button.closest('tr').remove();
+                window.location.href = 'index.php?action=batches&message=' + encodeURIComponent(result.message || 'Batch deleted successfully');
+
+         
+
+            } else {
+
+                window.location.href = 'index.php?action=batches&message=' + encodeURIComponent(result.message || 'Error while deleting batch');
+
+            }
+
+        });
+    </script>
 
 <script>
     setTimeout(() => {

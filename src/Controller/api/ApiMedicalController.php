@@ -13,6 +13,7 @@ class ApiMedicalController
 
         echo json_encode(
             MedicalRepository::getAll()
+            
         );
     }
 

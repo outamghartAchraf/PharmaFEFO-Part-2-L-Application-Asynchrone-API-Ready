@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PharmaFEFO - Add New Batch</title>
-    <!-- Tailwind CSS Engine Architecture CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Complete Font Awesome Elements Pack CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <!-- Google Fonts Library Definition Framework -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,14 +16,12 @@
 <body class="bg-slate-50 text-slate-900 antialiased selection:bg-blue-500 selection:text-white">
 
 <div class="flex h-screen w-screen overflow-hidden">
-
-    <!-- Sidebar Layout Navigation Window -->
+ 
      <?php include __DIR__ . '/../../../layout/sidebar.php'; ?>
 
-    <!-- Main Content Context Frame Window Container -->
+   
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-
-        <!-- Top Header Navigation Global Components -->
+ 
         <header class="bg-white border-b border-slate-200 px-6 lg:px-8 py-4 flex justify-between items-center z-10 flex-shrink-0">
             <div>
                 <h2 class="text-xl font-bold text-slate-900 tracking-tight">Batches Inventory</h2>
@@ -49,10 +44,9 @@
             </div>
         </header>
 
-        <!-- Dynamic Main Content View Area -->
+     
         <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
-            
-            <!-- Page Header Breadcrumbs Section -->
+  
             <div>
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
@@ -63,13 +57,15 @@
                 <p class="text-xs text-slate-500 font-medium mt-1 pl-10">Enter complete production metadata and expiration constraints for dynamic inventory stock control management.</p>
             </div>
 
-            <!-- Form Content Blueprint Card Frame -->
+        
             <div class="bg-white border border-slate-200 rounded-xl shadow-sm max-w-2xl overflow-hidden">
+                <p id="errorMessage" class="text-red-500 text-sm mt-2 px-6 py-4 "></p>
                 <div class="p-6 md:p-8">
-                    
-                    <form method="POST" action="index.php?action=createSubmitAction" class="space-y-5">
 
-                        <!-- Product Selection Entry Row -->
+                    
+                    <form id="batchForm" class="space-y-5">
+
+                     
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1">
                                 <i class="fa-solid fa-pills text-slate-400"></i> Product Target <span class="text-rose-500">*</span>
@@ -77,7 +73,7 @@
                             <div class="relative">
                                 <select name="product_id" 
                                         class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all appearance-none cursor-pointer" 
-                                        required>
+                                         >
                                     <option value="" class="text-slate-400">-- Select Targeted Product Reference --</option>
                                     
                                     <?php foreach ($products as $product): ?>
@@ -93,7 +89,7 @@
                             </div>
                         </div>
 
-                        <!-- Batch Number Identification Alpha-Numeric String Input -->
+                       
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1">
                                 <i class="fa-solid fa-barcode text-slate-400"></i> Batch Identifier Reference <span class="text-rose-500">*</span>
@@ -102,13 +98,13 @@
                                    name="batch_number"
                                    class="w-full bg-white text-sm font-mono tracking-tight rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                                    placeholder="e.g. PARA-001"
-                                   required>
+                                    >
                         </div>
 
-                        <!-- Grid Matrix Grouping: Expiration and Quantity Inputs -->
+                       
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             
-                            <!-- Expiration Limitation Target Date Input Element -->
+                          
                             <div class="space-y-1.5">
                                 <label class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1">
                                     <i class="fa-solid fa-calendar-times text-slate-400"></i> Expiration Limit Date <span class="text-rose-500">*</span>
@@ -116,10 +112,10 @@
                                 <input type="date"
                                        name="expiration_date"
                                        class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                                       required>
+                                        >
                             </div>
 
-                            <!-- Initial Received Quantity Volume Metric Input Element -->
+                          
                             <div class="space-y-1.5">
                                 <label class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1">
                                     <i class="fa-solid fa-boxes-packing text-slate-400"></i> Quantity Received <span class="text-rose-500">*</span>
@@ -129,15 +125,15 @@
                                        class="w-full bg-white text-sm rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                                        min="1"
                                        placeholder="Enter total input volume"
-                                       required>
+                                        >
                             </div>
 
                         </div>
 
-                        <!-- Visual Dividing Break Line -->
+                     
                         <div class="pt-2 border-t border-slate-100"></div>
 
-                        <!-- Form Actions Navigation Matrix -->
+                     
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
                             <a href="index.php?action=batch_index" 
                                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-all">
@@ -161,5 +157,40 @@
     </div>
 </div>
 
+<script>
+document.getElementById('batchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    if(!formData.get('product_id') || !formData.get('batch_number') || !formData.get('expiration_date') || !formData.get('quantity')) {
+        document.getElementById('errorMessage').textContent = 'Please fill in all required fields.';
+        return;
+    }
+
+    fetch('index.php?action=api_batch_store', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+
+            window.location.href = 'index.php?action=batches&message=' + encodeURIComponent(data.message);
+
+        } else {
+            document.getElementById('errorMessage').textContent = data.message || 'Error while saving batch';
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Server error');
+    });
+
+});
+</script>
 </body>
 </html>
