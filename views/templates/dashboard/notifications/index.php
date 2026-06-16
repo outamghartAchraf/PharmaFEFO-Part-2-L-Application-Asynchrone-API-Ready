@@ -66,7 +66,7 @@
                                     <th class="py-3.5 px-5 text-right w-40">Available Volume</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                            <tbody id="expiredBatchesTable" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
                             
                             <?php if (!empty($expiredBatches)): ?>
                                 <?php foreach ($expiredBatches as $batch): ?>
@@ -130,7 +130,7 @@
                                     <th class="py-3.5 px-5 text-right w-40">Available Volume</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                            <tbody id="expiringBatchesTable" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
 
                             <?php if (!empty($expiringBatches)): ?>
                                 <?php foreach ($expiringBatches as $batch): ?>
@@ -176,5 +176,136 @@
     </div>
 </div>
 
+<script>
+
+fetch('index.php?action=api_notifications')
+    .then(response => response.json())
+    .then(data => {
+
+        const expiredTable = document.getElementById('expiredBatchesTable');
+        const expiringTable = document.getElementById('expiringBatchesTable');
+
+        /* =========================
+           EXPIRED BATCHES
+        ========================= */
+
+        if (data.expired_batches.length === 0) {
+
+            expiredTable.innerHTML = `
+                <tr>
+                    <td colspan="4" class="py-10 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+                            <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                                <i class="fa-solid fa-circle-check text-base"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 mt-1">
+                                Clear Status Horizon
+                            </p>
+                            <p class="text-[11px] text-slate-400">
+                                No active stock items matching standard expired timeline indices found.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+
+            let expiredHtml = '';
+
+            data.expired_batches.forEach(batch => {
+
+                expiredHtml += `
+                    <tr class="hover:bg-rose-50/20 transition-colors">
+
+                        <td class="py-4 px-5 font-semibold text-slate-900">
+                            ${batch.product_name}
+                        </td>
+
+                        <td class="py-4 px-5 font-mono font-bold text-slate-600">
+                            ${batch.batch_number}
+                        </td>
+
+                        <td class="py-4 px-5 whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 font-bold tracking-tight">
+                                <i class="fa-regular fa-calendar-xmark text-rose-500"></i>
+                                ${batch.expiration_date}
+                            </span>
+                        </td>
+
+                        <td class="py-4 px-5 text-right text-slate-900 font-bold text-sm tracking-tight">
+                            ${Number(batch.qty_available).toLocaleString()}
+                        </td>
+
+                    </tr>
+                `;
+            });
+
+            expiredTable.innerHTML = expiredHtml;
+        }
+
+        /* =========================
+           EXPIRING BATCHES
+        ========================= */
+
+        if (data.expiring_batches.length === 0) {
+
+            expiringTable.innerHTML = `
+                <tr>
+                    <td colspan="4" class="py-10 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2 max-w-xs mx-auto">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center border border-slate-100">
+                                <i class="fa-solid fa-box-open text-sm"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 mt-1">
+                                No upcoming warnings
+                            </p>
+                            <p class="text-[11px] text-slate-400">
+                                All current batch records hold safe lifetime profiles exceeding 90 operational days.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+
+            let expiringHtml = '';
+
+            data.expiring_batches.forEach(batch => {
+
+                expiringHtml += `
+                    <tr class="hover:bg-slate-50/60 transition-colors">
+
+                        <td class="py-4 px-5 font-semibold text-slate-900">
+                            ${batch.product_name}
+                        </td>
+
+                        <td class="py-4 px-5 font-mono font-bold text-slate-600">
+                            ${batch.batch_number}
+                        </td>
+
+                        <td class="py-4 px-5 whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-bold tracking-tight">
+                                <i class="fa-regular fa-clock text-amber-600"></i>
+                                ${batch.expiration_date}
+                            </span>
+                        </td>
+
+                        <td class="py-4 px-5 text-right text-slate-900 font-bold text-sm tracking-tight">
+                            ${Number(batch.qty_available).toLocaleString()}
+                        </td>
+
+                    </tr>
+                `;
+            });
+
+            expiringTable.innerHTML = expiringHtml;
+        }
+
+    })
+    .catch(error => {
+        console.error('Error fetching notifications:', error);
+    });
+
+</script>
 </body>
 </html>

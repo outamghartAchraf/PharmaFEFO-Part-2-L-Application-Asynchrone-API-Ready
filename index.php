@@ -3,12 +3,13 @@ require_once __DIR__ . "/src/controller/web/UserController.php";
 require_once __DIR__ . "/src/controller/web/MedicalController.php";
 require_once __DIR__ . "/src/controller/web/BatchController.php";
 require_once __DIR__ . "/src/controller/web/StockMovementController.php";
-require_once __DIR__ . "/src/controller/NotificationController.php";
+require_once __DIR__ . "/src/controller/web/NotificationController.php";
 require_once __DIR__ . "/src/controller/ReportController.php";
 require_once __DIR__ . "/src/controller/api/ApiMedicalController.php";
 require_once __DIR__ . "/src/controller/api/ApiBatchController.php";
 require_once __DIR__ . "/src/controller/api/ApiUserController.php";
 require_once __DIR__ . "/src/controller/web/DashboardController.php";
+require_once __DIR__ . "/src/controller/api/ApiNotificationController.php";
 require_once __DIR__ . "/src/controller/api/StockMovementApiController.php";
 
 
@@ -84,7 +85,9 @@ if (isset($_GET['action'])) {
             StockMovementController::out();
             break;
 
-
+        case 'notifications':
+            NotificationController::index();
+            break;
 
 
         // API
@@ -163,6 +166,10 @@ if (isset($_GET['action'])) {
 
         case 'api_stock_movements':
             StockMovementApiController::index();
+            break;
+
+        case 'api_notifications':
+            ApiNotificationController::index();
             break;
     }
 } else {
