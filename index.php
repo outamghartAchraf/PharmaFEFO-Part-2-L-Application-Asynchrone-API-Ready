@@ -1,29 +1,98 @@
-pharmafefo/
-├── config/
-│   ├── database.php
-│   └── environment.php      # Gestion des variables d'environnement 
-├── public/
-│   ├── css/
-│   ├── js/
-│   │   ├── app.js           # Gestion globale (Sécurité, déconnexion)
-│   │   └── dashboard.js     # Logique Fetch API 
-│   └── index.php            # Routeur mis à jour (aiguille vers Web ou API)
-├── src/
-│   ├── Controller/
-│   │   ├── Web/             # CONTROLEURS TRADITIONNELS (Retournent du HTML)
-│   │   │   ├── AuthController.php
-│   │   │   └── AdminController.php
-│   │   └── Api/             # CONTROLEURS API (Retournent du JSON uniquement)
-│   │       ├── ApiDashboardController.php
-│   │       └── ApiStockController.php
-│   ├── Entity/
-│   ├── Enum/
-│   ├── Service/             # NOUVEAU : Services  (partie logique)
-│   │   ├── AuthService.php  # Logique de vérification des sessions et rôles
-│   │   └── StockService.php # Logique métier de calcul des stocks
-│   └── Repository/
-└── templates/               # Contient uniquement les squelettes HTML initiaux
-    ├── auth/
-    │   └── login.php
-    └── admin/
-        └── dashboard.php
+<?php
+
+require_once __DIR__ . "/src/controller/UserController.php";
+require_once __DIR__ . "/src/controller/web/MedicalController.php";
+require_once __DIR__ . "/src/controller/web/BatchController.php";
+require_once __DIR__ . "/src/controller/StockMovementController.php";
+require_once __DIR__ . "/src/controller/NotificationController.php";
+require_once __DIR__ . "/src/controller/ReportController.php";
+require_once __DIR__ . "/src/controller/api/ApiMedicalController.php";
+require_once __DIR__ . "/src/controller/api/ApiBatchController.php";
+
+
+if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+
+    switch ($action) {
+        case 'login':
+            UserController::loginAction();
+            break;
+
+        case 'login_submit':
+            UserController::loginSubmitAction();
+            break;
+
+        // WEB
+        case 'products':
+            MedicalController::listAction();
+            break;
+
+        case 'products_create':
+            MedicalController::createAction();
+            break;
+
+        case 'products_edit':
+            MedicalController::editAction();
+            break;
+
+        case 'batches':
+            BatchController::listAction();
+            break;
+
+        case 'batches_create':
+            BatchController::createAction();
+            break;
+
+        case 'batches_edit':
+            BatchController::editAction();
+            break;
+
+
+
+        // API
+        case 'api_products':
+            ApiMedicalController::index();
+            break;
+
+        case 'api_product':
+            ApiMedicalController::show();
+            break;
+
+        case 'api_product_store':
+            ApiMedicalController::store();
+            break;
+
+        case 'api_product_update':
+            ApiMedicalController::update();
+            break;
+
+        case 'api_product_delete':
+            ApiMedicalController::delete();
+            break;
+
+        case 'api_batches':
+            ApiBatchController::index();
+            break;
+
+        case 'api_batch_show':
+            ApiBatchController::show();
+            break;
+
+        case 'api_batch_store':
+            ApiBatchController::store();
+            break;
+
+        case 'api_batch_update':
+            ApiBatchController::update();
+            break;
+
+        case 'api_batch_delete':
+            ApiBatchController::delete();
+            break;
+
+        case 'logout':
+            UserController::logout();
+            break;
+    }
+} else {
+}

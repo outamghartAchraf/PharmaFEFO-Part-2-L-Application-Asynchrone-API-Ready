@@ -23,4 +23,4 @@ class DB {
     }
 }
 
-echo DB::connect() ? "DB Connected" : "DB Connection Failed";
+
