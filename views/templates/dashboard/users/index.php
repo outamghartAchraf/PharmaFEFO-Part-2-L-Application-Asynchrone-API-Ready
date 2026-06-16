@@ -165,9 +165,10 @@ fetch('index.php?action=api_users')
                             <span>Edit</span>
                         </a>
 
-                        <a href="index.php?action=user_delete&id=${u.id}"
-                           onclick="return confirm('Confirm deletion?')"
-                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-100 bg-rose-50/50 text-rose-600 hover:bg-rose-600 hover:text-white hover:border-rose-600 font-bold transition-all shadow-sm">
+                        <a href="#"
+                          data-id="${u.id}"
+                         
+                           class="delete-user inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-100 bg-rose-50/50 text-rose-600 hover:bg-rose-600 hover:text-white hover:border-rose-600 font-bold transition-all shadow-sm">
                             <i class="fa-solid fa-user-slash text-[10px]"></i>
                             <span>Delete</span>
                         </a>
@@ -182,6 +183,42 @@ fetch('index.php?action=api_users')
     })
     .catch(err => console.error("Error loading users:", err));
 </script>
+
+ <script>
+        document.addEventListener('click', async function(e) {
+
+            const button = e.target.closest('.delete-user');
+
+            if (!button) return;
+
+            e.preventDefault();
+
+            const id = button.dataset.id;
+
+            if (!confirm('Are you sure ?')) {
+                return;
+            }
+
+            const response = await fetch(
+                `index.php?action=api_user_delete&id=${id}`, {
+                    method: 'POST'
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                button.closest('tr').remove();
+                window.location.href = 'index.php?action=user_index&message=' + encodeURIComponent(result.message || 'User deleted successfully');
+
+            } else {
+
+                window.location.href = 'index.php?action=user_index&message=' + encodeURIComponent(result.message || 'Error while deleting user');
+            }
+
+        });
+    </script>
 
 <script>
     setTimeout(() => {
