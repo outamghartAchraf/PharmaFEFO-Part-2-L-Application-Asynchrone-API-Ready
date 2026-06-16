@@ -170,7 +170,89 @@
 </div>
 
 <script>
-    fetch('index.php?action=api_users').then(res => res.json)
+fetch('index.php?action=api_users')
+    .then(res => res.json())
+    .then(data => {
+
+        // If API returns array directly
+        const users = Array.isArray(data) ? data : data.users;
+
+        const tbody = document.querySelector("tbody");
+
+        if (!tbody || !users) return;
+
+        // Clear old rows
+        tbody.innerHTML = "";
+
+        if (users.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-5 py-12 text-center">
+                        <div class="max-w-xs mx-auto flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-sm">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-700">Identity Directory Empty</h4>
+                            <p class="text-[11px] font-medium text-slate-400">No users found in system.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        users.forEach(u => {
+            const row = `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+
+                    <td class="px-5 py-3.5 text-xs font-mono font-bold text-slate-400">
+                        #${u.id}
+                    </td>
+
+                    <td class="px-5 py-3.5 text-xs font-bold text-slate-900">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px]">
+                                <i class="fa-solid fa-user text-[9px]"></i>
+                            </div>
+                            <span>${u.name}</span>
+                        </div>
+                    </td>
+
+                    <td class="px-5 py-3.5 text-xs font-medium text-slate-600 font-mono">
+                        ${u.email}
+                    </td>
+
+                    <td class="px-5 py-3.5 text-xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 border border-blue-200 text-blue-700 shadow-sm">
+                            <i class="fa-solid fa-shield-halved text-[9px]"></i>
+                            ${u.role_name ?? 'N/A'}
+                        </span>
+                    </td>
+
+                    <td class="px-5 py-3.5 text-right text-xs space-x-1">
+
+                        <a href="index.php?action=user_edit&id=${u.id}"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-blue-600 hover:border-blue-200 font-bold transition-all shadow-sm">
+                            <i class="fa-solid fa-user-pen text-[10px]"></i>
+                            <span>Edit</span>
+                        </a>
+
+                        <a href="index.php?action=user_delete&id=${u.id}"
+                           onclick="return confirm('Confirm deletion?')"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-100 bg-rose-50/50 text-rose-600 hover:bg-rose-600 hover:text-white hover:border-rose-600 font-bold transition-all shadow-sm">
+                            <i class="fa-solid fa-user-slash text-[10px]"></i>
+                            <span>Delete</span>
+                        </a>
+
+                    </td>
+                </tr>
+            `;
+
+            tbody.insertAdjacentHTML("beforeend", row);
+        });
+
+    })
+    .catch(err => console.error("Error loading users:", err));
 </script>
 
 <script>
