@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,18 +25,14 @@
         <h1 class="text-2xl font-bold mt-4">Login</h1>
         <p class="text-gray-500 text-sm">Welcome back</p>
 
-        <?php 
-          if (isset($_SESSION['error'])) {
-              echo '<p class="text-red-500 text-sm mt-2">' . $_SESSION['error'] . '</p>';
-              unset($_SESSION['error']);
-          }
-        ?>
+          <p id="loginError" class="text-red-500 text-sm mt-2"></p>'
+       
       </div>
 
       <!-- BODY -->
       <div class="p-8 space-y-5">
 
-        <form action="index.php?action=login_submit" method="POST" class="space-y-5">
+        <form id="loginForm" class="space-y-5">
 
           <!-- EMAIL -->
           <div>
@@ -45,7 +41,7 @@
               <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-400"></i>
               <input type="email" name="email"
                 class="w-full pl-10 pr-3 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="Email"  >
+                placeholder="Email">
             </div>
           </div>
 
@@ -57,7 +53,7 @@
 
               <input type="password" name="password"
                 class="w-full pl-10 pr-10 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="Password"  >
+                placeholder="Password">
 
               <button type="button"
                 class="absolute right-3 top-3 text-gray-400">
@@ -81,5 +77,31 @@
   </div>
 
 </body>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    if(!formData.get('email') || !formData.get('password')) {
+      document.getElementById('loginError').textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    const response = await fetch('index.php?action=api_login', {
+      method: 'POST',
+      body: formData
+    });
+     
+    const data = await response.json();
+
+    if (data.success) {
+      window.location.href = data.redirect;
+    } else {
+      document.getElementById('loginError').textContent = data.message;
+    }
+  });
+</script>
 
 </html>

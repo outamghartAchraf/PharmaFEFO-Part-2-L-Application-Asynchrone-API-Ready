@@ -10,15 +10,17 @@ class ApiUserController
 {
     public static function login()
     {
-        header('Content-Type: application/json');
+         
 
-        $email    = $_POST['email'] ;
-        $password = $_POST['password'] ;
+         header('Content-Type: application/json');
 
-        if (!$email || !$password) {
+        $email    = trim($_POST['email'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+
+        if (empty($email) || empty($password)) {
             echo json_encode([
                 'success' => false,
-                'message' => 'All fields are required'
+                'message' => 'Please fill in all fields'
             ]);
             exit;
         }
@@ -28,7 +30,7 @@ class ApiUserController
         if (!$user) {
             echo json_encode([
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid email or password'
             ]);
             exit;
         }
@@ -43,11 +45,11 @@ class ApiUserController
         echo json_encode([
             'success' => true,
             'message' => 'Login successful',
-            'user' => $_SESSION['user']
+            'redirect' => 'index.php?action=dashboard'
         ]);
+
         exit;
     }
-
     public static function store()
     {
         Middleware::isAdmin();

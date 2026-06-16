@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/src/controller/UserController.php";
+require_once __DIR__ . "/src/controller/web/UserController.php";
 require_once __DIR__ . "/src/controller/web/MedicalController.php";
 require_once __DIR__ . "/src/controller/web/BatchController.php";
 require_once __DIR__ . "/src/controller/StockMovementController.php";
@@ -8,21 +8,37 @@ require_once __DIR__ . "/src/controller/NotificationController.php";
 require_once __DIR__ . "/src/controller/ReportController.php";
 require_once __DIR__ . "/src/controller/api/ApiMedicalController.php";
 require_once __DIR__ . "/src/controller/api/ApiBatchController.php";
+require_once __DIR__ . "/src/controller/api/ApiUserController.php";
+require_once __DIR__ . "/src/controller/web/DashboardController.php";
 
 
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
 
     switch ($action) {
-        case 'login':
-            UserController::loginAction();
-            break;
-
-        case 'login_submit':
-            UserController::loginSubmitAction();
-            break;
 
         // WEB
+
+        case 'login':
+            UserController::login();
+            break;
+
+        case 'user_index':
+            UserController::index();
+            break;
+
+        case 'user_create':
+            UserController::create();
+            break;
+
+        case 'user_edit':
+            UserController::edit();
+            break;
+
+        case 'dashboard':
+            DashboardController::DashboardAction();
+            break;
+
         case 'products':
             MedicalController::listAction();
             break;
@@ -50,6 +66,31 @@ if (isset($_GET['action'])) {
 
 
         // API
+
+        case 'api_login':
+            ApiUserController::login();
+            break;
+
+        case 'api_user_store':
+            ApiUserController::store();
+            break;
+
+        case 'api_user_update':
+            ApiUserController::update();
+            break;
+
+        case 'api_user_delete':
+            ApiUserController::delete();
+            break;
+
+        case 'api_users':
+            ApiUserController::getUsers();
+            break;
+
+        case 'api_user':
+            ApiUserController::getUser();
+            break;
+
         case 'api_products':
             ApiMedicalController::index();
             break;
