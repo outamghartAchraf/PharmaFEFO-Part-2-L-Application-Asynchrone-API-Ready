@@ -4,13 +4,15 @@ require_once __DIR__ . "/src/controller/web/MedicalController.php";
 require_once __DIR__ . "/src/controller/web/BatchController.php";
 require_once __DIR__ . "/src/controller/web/StockMovementController.php";
 require_once __DIR__ . "/src/controller/web/NotificationController.php";
-require_once __DIR__ . "/src/controller/ReportController.php";
+require_once __DIR__ . "/src/controller/web/ReportController.php";
 require_once __DIR__ . "/src/controller/api/ApiMedicalController.php";
 require_once __DIR__ . "/src/controller/api/ApiBatchController.php";
 require_once __DIR__ . "/src/controller/api/ApiUserController.php";
 require_once __DIR__ . "/src/controller/web/DashboardController.php";
 require_once __DIR__ . "/src/controller/api/ApiNotificationController.php";
 require_once __DIR__ . "/src/controller/api/StockMovementApiController.php";
+require_once __DIR__ . "/src/controller/api/ApiReportController.php";
+
 
 
 
@@ -87,6 +89,26 @@ if (isset($_GET['action'])) {
 
         case 'notifications':
             NotificationController::index();
+            break;
+
+        case 'reports':
+            ReportController::index();
+            break;
+
+        case 'report_stock':
+            ReportController::stock();
+            break;
+
+        case 'report_expired':
+            ReportController::expired();
+            break;
+
+        case 'report_expiring':
+            ReportController::expiringSoon();
+            break;
+
+        case 'report_movements':
+            ReportController::movements();
             break;
 
 
@@ -170,6 +192,25 @@ if (isset($_GET['action'])) {
 
         case 'api_notifications':
             ApiNotificationController::index();
+            break;
+        case 'api_report_statistics':
+            ApiReportController::statistics();
+            break;
+
+        case 'api_report_stock':
+            ApiReportController::stock();
+            break;
+
+        case 'api_report_expired':
+            ApiReportController::expired();
+            break;
+
+        case 'api_report_expiring':
+            ApiReportController::expiringSoon();
+            break;
+
+        case 'api_report_movements':
+            ApiReportController::movements();
             break;
     }
 } else {

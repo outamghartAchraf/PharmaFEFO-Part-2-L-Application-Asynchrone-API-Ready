@@ -64,7 +64,7 @@
                             </tr>
                         </thead>
 
-                        <tbody class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tbody id="reportTableBody" class="text-xs divide-y divide-slate-100 text-slate-700 font-medium">
 
                         <?php if (!empty($reports)): ?>
                             <?php foreach ($reports as $r): ?>
@@ -130,5 +130,79 @@
     </div>
 </div>
 
+<script>
+fetch('index.php?action=api_report_expiring')
+    .then(res => res.json())
+    .then(data => {
+
+        const tbody = document.getElementById('reportTableBody');
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="py-16 px-5 text-center">
+                        <div class="flex flex-col items-center justify-center gap-2.5 max-w-sm mx-auto">
+                            <div class="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">No imminent expirations</p>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    There are no batch configurations tracking down their terminal
+                                    90-day operational lifecycle window currently.
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        data.forEach(r => {
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50/60 transition-colors">
+
+                    <td class="py-4 px-5 font-bold text-slate-900 text-sm tracking-tight">
+                        ${r.product_name ?? ''}
+                    </td>
+
+                    <td class="py-4 px-5 text-slate-500 font-mono tracking-tight">
+                        ${r.cip_code ?? ''}
+                    </td>
+
+                    <td class="py-4 px-5 font-mono font-bold text-slate-600">
+                        ${r.batch_number ?? ''}
+                    </td>
+
+                    <td class="py-4 px-5 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-bold tracking-tight">
+                            <i class="fa-solid fa-calendar-day text-amber-500"></i>
+                            ${r.expiration_date ?? ''}
+                        </span>
+                    </td>
+
+                    <td class="py-4 px-5 text-center whitespace-nowrap">
+                        <span class="inline-block px-2 py-1 rounded-md bg-amber-100 text-amber-800 font-extrabold text-[11px]">
+                            ${parseInt(r.days_remaining || 0)} days left
+                        </span>
+                    </td>
+
+                    <td class="py-4 px-5 text-right font-extrabold text-sm text-slate-900 tracking-tight">
+                        ${Number(r.qty_available || 0).toLocaleString()}
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    })
+    .catch(err => {
+        console.error('Error fetching expiring report:', err);
+    });
+</script>
 </body>
 </html>

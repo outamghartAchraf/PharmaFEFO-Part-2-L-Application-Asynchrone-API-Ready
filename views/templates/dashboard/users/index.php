@@ -170,6 +170,10 @@
 </div>
 
 <script>
+    fetch('index.php?action=api_users').then(res => res.json)
+</script>
+
+<script>
     setTimeout(() => {
     const toast = document.getElementById('toast');
     if (toast) {

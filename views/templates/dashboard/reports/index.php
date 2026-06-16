@@ -58,8 +58,8 @@
                     <div class="flex items-center justify-between">
                         <div class="space-y-1.5">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Products</p>
-                            <h4 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                                <?= number_format((int) $statistics->total_products) ?>
+                            <h4 class="total-products text-3xl font-extrabold text-slate-900 tracking-tight">
+                                
                             </h4>
                         </div>
                         <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
@@ -72,8 +72,8 @@
                     <div class="flex items-center justify-between">
                         <div class="space-y-1.5">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Batches</p>
-                            <h4 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                                <?= number_format((int) $statistics->total_batches) ?>
+                            <h4 class="total-batches text-3xl font-extrabold text-slate-900 tracking-tight">
+                                 
                             </h4>
                         </div>
                         <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 transition-all duration-300">
@@ -86,11 +86,11 @@
                     <div class="flex items-center justify-between">
                         <div class="space-y-1.5">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expired Batches</p>
-                            <h4 class="text-3xl font-extrabold text-rose-600 tracking-tight">
-                                <?= number_format((int) $statistics->expired_batches) ?>
+                            <h4 class="expired-batches text-3xl font-extrabold text-rose-600 tracking-tight">
+                            
                             </h4>
                         </div>
-                        <div class="w-12 h-12 rounded-xl <?= (int)$statistics->expired_batches > 0 ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-slate-50 text-slate-400 border border-slate-100' ?> flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white group-hover:border-rose-600 transition-all duration-300">
+                       <div id="expiredIcon" class="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white group-hover:border-rose-600 transition-all duration-300"> 
                             <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                         </div>
                     </div>
@@ -100,11 +100,11 @@
                     <div class="flex items-center justify-between">
                         <div class="space-y-1.5">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expiring Soon</p>
-                            <h4 class="text-3xl font-extrabold text-amber-600 tracking-tight">
-                                <?= number_format((int) $statistics->expiring_soon) ?>
+                            <h4 class="expiring-soon text-3xl font-extrabold text-amber-600 tracking-tight">
+                               
                             </h4>
                         </div>
-                        <div class="w-12 h-12 rounded-xl <?= (int)$statistics->expiring_soon > 0 ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-slate-50 text-slate-400 border border-slate-100' ?> flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600 transition-all duration-300">
+                      <div id="expiringIcon" class="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600 transition-all duration-300">
                             <i class="fa-solid fa-clock text-lg"></i>
                         </div>
                     </div>
@@ -179,6 +179,37 @@
         </main>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    fetch('index.php?action=api_report_statistics')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load statistics');
+            }
+            return response.json();
+        })
+        .then(data => {
+
+            document.querySelector('.total-products').textContent =
+                Number(data.total_products || 0).toLocaleString();
+
+            document.querySelector('.total-batches').textContent =
+                Number(data.total_batches || 0).toLocaleString();
+
+            document.querySelector('.expired-batches').textContent =
+                Number(data.expired_batches || 0).toLocaleString();
+
+            document.querySelector('.expiring-soon').textContent =
+                Number(data.expiring_soon || 0).toLocaleString();
+        })
+        .catch(error => {
+            console.error('Error fetching statistics:', error);
+        });
+
+});
+</script>
 
 </body>
 </html>

@@ -131,5 +131,33 @@
     </div>
 </div>
 
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch('index.php?action=api_user_store', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = 'index.php?action=user_index&message=' + encodeURIComponent(data.message);
+        } else {
+            const errorBox = document.querySelector(".bg-rose-50");
+            if (errorBox) {
+                errorBox.querySelector("p").textContent = data.message || "Error creating user";
+            }
+        }
+    })
+    .catch(err => {
+        console.error("Error creating user:", err);
+    });
+});
+</script>
+
 </body>
 </html>
