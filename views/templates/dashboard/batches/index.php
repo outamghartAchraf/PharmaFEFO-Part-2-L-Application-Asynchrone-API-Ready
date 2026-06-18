@@ -15,6 +15,7 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
+    
 </head>
 
 <body class="bg-slate-50 text-slate-900 antialiased selection:bg-blue-500 selection:text-white">
@@ -26,8 +27,6 @@
         </div>
 
     <?php endif; ?>
-
-
 
     <div class="flex h-screen w-screen overflow-hidden">
 
